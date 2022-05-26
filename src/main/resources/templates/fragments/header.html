@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<body th:fragment="header">
+<header class="navbar navbar-dark bg-dark sticky-top">
+    <div class="container-fluid mx-3">
+        <a class="navbar-brand" th:href="@{/}">
+            <img src="" th:src="@{/img/logo.png}" alt="Logo"/>
+        </a>
+        <div class="dropdown" sec:authorize="isAuthenticated()">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <i class="bi bi-person-fill"></i>
+                <th:block th:text="${#authentication.details}"/>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" th:href="@{/account/overview}">Mon compte</a></li>
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="dropdown-item">Déconnexion</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <a class="btn btn-secondary" th:href="@{/login}" sec:authorize="not isAuthenticated()">
+            <i class="bi bi-key-fill"></i> Se connecter
+        </a>
+    </div>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-auto bg-dark vh-100">
+            <ul class="list-group">
+                <li class="list-group-item bg-dark text-white"><a class="disable-underline" th:href="@{/}"><i
+                        class="bi bi-house-fill"></i><span class="d-none d-md-inline"> Accueil</span></a></li>
+                <th:block sec:authorize="hasRole('ADMIN')">
+                    <li class="list-group-item bg-dark text-white">
+                        <a class="disable-underline" th:href="@{/account/list}">
+                            <i class="bi bi-people-fill"></i><span
+                                class="d-none d-md-inline"> Gestion des comptes</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item bg-dark text-white"><a class="disable-underline"
+                                                                      th:href="@{/group/list}">
+                        <i class="bi bi-folder-fill"></i> <span
+                            class="d-none d-md-inline"> Gestion des groupes</span></a></li>
+                    <li class="list-group-item bg-dark text-white">
+                        <a class="disable-underline" th:href="@{/event/list}">
+                            <i class="bi bi-calendar2-event-fill"></i> <span class="d-none d-md-inline"> Gestion des événements</span>
+                        </a>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+        <div class="col">
+</body>
+</html>

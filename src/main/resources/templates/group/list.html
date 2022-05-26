@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Gestion des groupes</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Gestion des groupes</li>
+        </ol>
+    </nav>
+</div>
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-people-fill"></i> Gestion des groupes</h2>
+    <hr>
+    <div class="alert alert-info alert-dismissible" role="alert" th:if="${param.deleted}">
+        Le groupe a bien été supprimé.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <ul class="list-group mb-3" th:unless="${groups.isEmpty()}">
+        <li class="list-group-item" th:each="group : ${groups}">
+            <a th:href="@{/group/{id}(id=${group.id})}" class="link-dark" th:text="${group}"></a>
+        </li>
+    </ul>
+    <p th:if="${groups.isEmpty()}">Aucun groupe n'existe dans l'application.</p>
+    <div class="d-flex justify-content-end">
+        <a th:href="@{/group/create}" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Créer un groupe
+        </a>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title th:text="${event}"></title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/event/list}">Gestion des événements</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${event.name}"></li>
+        </ol>
+    </nav>
+</div>
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-calendar-week-fill"></i>
+        <th:block th:text="${event}"/>
+    </h2>
+    <hr>
+    <div class="alert alert-success alert-dismissible" role="alert" th:if="${param.updated}">
+        L'événement a bien été mis à jour.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="alert alert-info alert-dismissible" role="alert" th:if="${param.added}">
+        Le groupe a bien été ajouté.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="alert alert-info alert-dismissible" role="alert" th:if="${param.removed}">
+        Le groupe a bien été retiré.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="alert alert-success alert-dismissible" role="alert" th:if="${param.booked}">
+        La réservation a bien été prise en compte.
+        <button aria-label="Fermer" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+    </div>
+    <div class="alert alert-warning alert-dismissible" role="alert" th:if="${param.unbooked}">
+        La réservation a bien été annulée.
+        <button aria-label="Fermer" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+    </div>
+    <div class="alert alert-warning alert-dismissible" role="alert" th:if="${param.slotDeleted}">
+        Le créneau a bien été supprimé.
+        <button aria-label="Fermer" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+    </div>
+    <h4>Informations sur l'événement</h4>
+    <form th:action="@{#}" th:object="${updateEventDto}" method="post">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control"
+                   th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"
+                   id="name" name="name" th:value="${event.name}" required/>
+            <label for="name">Nom</label>
+            <div class="invalid-feedback" th:errors="*{name}"></div>
+        </div>
+        <div class="form-floating mb-3">
+            <textarea class="form-control" style="min-height: 5rem"
+                      th:classappend="${#fields.hasErrors('description') ? 'is-invalid' : ''}"
+                      id="description" name="description" th:text="${event.description}"></textarea>
+            <label for="description">Description</label>
+            <div class="invalid-feedback" th:errors="*{description}"></div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control"
+                   th:classappend="${#fields.hasErrors('location') ? 'is-invalid' : ''}"
+                   id="location" name="location" th:value="${event.location}"
+                   placeholder="Aucune information disponible"/>
+            <label for="location">Emplacement</label>
+            <div class="invalid-feedback" th:errors="*{location}"></div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="author" th:value="${event.author}" readonly/>
+            <label for="author">Organisateur</label>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-danger me-3" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash-fill"></i> Supprimer
+            </button>
+            <button type="submit" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Modifier
+            </button>
+        </div>
+    </form>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Suppression de l'événement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr·e de vouloir supprimer l'événement <span class="fw-bold"
+                                                                           th:text="${event}"></span> ?<br>
+                    Cette action est <span class="fw-bold">IRRÉVERSIBLE</span>.<br>
+                    Tous les créneaux, réservés ou non, seront perdus lors de la suppression.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/event/{id}/delete(id=${event.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Confirmer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h4>Groupes concernés</h4>
+    <ul class="list-group mb-3" th:unless="${event.groups.isEmpty()}">
+        <li class="list-group-item" th:each="group : ${#lists.sort(event.groups)}">
+            <div class="d-flex justify-content-between">
+                <a th:href="@{/group/{id}(id=${group.id})}" class="link-dark" th:text="${group}"></a>
+                <form th:action="@{/event/{eventId}/group/{groupId}/remove(eventId=${event.id},groupId=${group.id})}"
+                      method="post">
+                    <button type="submit" class="btn-close" aria-label="Retirer le groupe"></button>
+                </form>
+            </div>
+        </li>
+    </ul>
+    <p class="text-muted mb-3" th:if="${event.groups.isEmpty()}">
+        Aucun groupe n'est concerné par cet événement.<br>
+        Par conséquent, il n'est donc visible par personne.
+    </p>
+    <div class="d-flex justify-content-end" th:unless="${groups.isEmpty()}">
+        <div class="dropdown">
+            <button type="button" class="btn btn-secondary dropdown-toggle" id="addGroupDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-plus-lg"></i> Ajouter un groupe
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="addGroupDropdown">
+                <li th:each="group : ${#lists.sort(groups)}">
+                    <form th:action="@{/event/{eventId}/group/{groupId}/add(eventId=${event.id},groupId=${group.id})}"
+                          method="post">
+                        <button type="submit" class="dropdown-item" th:text="${group}"></button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <h4>Créneaux</h4>
+    <div class="row mb-3" th:unless="${slots.isEmpty()}">
+        <div class="col-6 mb-3" th:each="day : ${#lists.sort(slots.keySet())}">
+            <ul class="list-group" th:with="slots = ${slots.get(day)}">
+                <li class="list-group-item text-center">
+                    <span class="fw-bold" th:text="${#temporals.format(day, 'EEEE dd MMM YYYY')}"></span>
+                </li>
+                <li class="list-group-item" th:each="slot : ${slots}">
+                    <div class="row align-items-center">
+                        <div class="col-1 fw-bold" style="min-width: 55px"
+                             th:text="${#temporals.format(slot.start, 'HH:mm')}"></div>
+                        <div class="col">
+                            <span th:if="${slot.booker}" th:text="${slot.booker}"></span>
+                            <span class="text-muted" th:unless="${slot.booker}">Créneau libre</span>
+                        </div>
+                        <div class="col-auto">
+                            <a class="disable-underline"
+                               th:href="@{/event/__${event.id}__/slot/__${slot.id}__/edit}">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row" th:if="${slot.comment}">
+                        <div class="col-1" style="min-width: 55px"></div>
+                        <div class="col text-muted" th:text="${slot.comment}"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <p class="text-muted mb-3" th:if="${slots.isEmpty()}">
+        Cet événement ne dispose d'aucun créneau pour le moment.
+    </p>
+    <div class="d-flex justify-content-end">
+        <a class="btn btn-secondary" th:href="@{/event/{id}/slot/create(id=${event.id})}">
+            <i class="bi bi-plus-lg"></i> Ajouter des créneaux
+        </a>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

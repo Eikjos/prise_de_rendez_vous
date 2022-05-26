@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Création d'un événement</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/event/list}">Gestion des événements</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Création d'un événement</li>
+        </ol>
+    </nav>
+</div>
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-calendar-plus-fill"></i> Création d'un événement</h2>
+    <hr>
+    <form th:action="@{#}" th:object="${createEventDto}" method="post">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" th:classerror="is-invalid" id="name" th:field="*{name}" required/>
+            <label for="name">Nom</label>
+            <div class="invalid-feedback" th:errors="*{name}"></div>
+        </div>
+        <div class="form-floating mb-3">
+            <textarea class="form-control" th:classerror="is-invalid" id="description" th:field="*{description}">
+            </textarea>
+            <label for="description">Description</label>
+            <div class="invalid-feedback" th:errors="*{description}"></div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" th:classerror="is-invalid" id="location" th:field="*{location}"/>
+            <label for="location">Emplacement</label>
+            <div class="invalid-feedback" th:errors="*{location}"></div>
+        </div>
+        <p class="text-muted">La création de créneaux et l'affectation de groupes se fera une fois l'événement créé.</p>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Créer
+            </button>
+        </div>
+    </form>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

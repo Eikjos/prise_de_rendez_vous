@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Modification de créneau</title>
+</head>
+
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item">
+                <a class="link-dark" th:href="@{/event/{id}(id=${slot.event.id})}" th:text="${slot.event}"></a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Ma réservation</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="mx-5">
+    <h2><i class="bi bi-calendar-event-fill"></i> Ma réservation</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 th:text="${slot.event.name}" class="card-title"></h5>
+            <p th:text="${slot.event.description}" class="card-text"></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">date:
+                <th:block th:text="${#temporals.format(slot.start, 'dd/MM/yyyy HH:mm')}">
+                </th:block>
+            </li>
+            <li class="list-group-item">salle:
+                <th:block th:text="${slot.event.location}"/>
+            </li>
+            <li class="list-group-item">Commentaire:<br>
+                <p th:unless="${slot.comment}" class="text-muted">Aucun commentaire</p>
+                <p th:if="${slot.comment}" th:text="${slot.comment}"></p>
+            </li>
+        </ul>
+        <div class="card-footer">
+            <div class="btn-toolbar justify-content-end">
+                <div class="btn-group mr-2">
+                    <form th:action="@{{id}/unbook(id=${slot.id})}" method="post">
+                        <button class="btn btn-danger" type="submit">
+                            <i class="bi bi-x-square-fill"></i> Annuler
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+
+</html>

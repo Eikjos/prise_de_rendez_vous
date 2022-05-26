@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/v/bs5/dt-1.11.5/af-2.3.7/b-2.2.2/b-colvis-2.2.2/b-print-2.2.2/r-2.2.9/sb-1.3.2/sp-2.0.0/datatables.min.css"/>
+    <title>Gestion des comptes</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Gestion des comptes</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container" th:unless="${param.isEmpty()}">
+    <div class="alert alert-info alert-dismissible" role="alert" th:if="${param.deleted}">
+        Le compte a été supprimé avec succès.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible" role="alert" th:if="${param.adderror}">
+        Un compte de la liste existe deja dans la base de donées
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible" role="alert" th:if="${param.formaterror}">
+        Le fichier fourni n'est pas un fichier csv
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+</div>
+
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-people-fill"></i> Gestion des enseignants</h2>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered align-middle" id="teacherList">
+            <thead>
+            <tr>
+                <th class="text-center col-1">Identifiant</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th class="text-center col-1">Type</th>
+                <th class="col-1">Gestion</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="account : ${#lists.sort(accounts)}"
+                th:unless="${account.type.equals(T(com.l3info.prdv.account.AccountType).STUDENT)}">
+                <td class="text-center align-items-center"><samp th:text="${account.username}"></samp></td>
+                <td th:text="${account.firstName}"></td>
+                <td th:text="${account.lastName}"></td>
+                <td class="text-center" th:text="${account.type}"></td>
+                <td class="text-center col-auto">
+                    <a class="btn btn-secondary" th:href="@{/account/{id}(id=${account.id})}">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end mb-3">
+            <a th:href="@{/account/create}" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Créer un compte
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-people-fill"></i> Gestion des étudiants</h2>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered align-middle" id="studentList">
+            <thead>
+            <tr>
+                <th class="text-center col-1">Identifiant</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th class="col-1">Gestion</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="account : ${#lists.sort(accounts)}"
+                th:if="${account.type.equals(T(com.l3info.prdv.account.AccountType).STUDENT)}">
+                <td class="text-center align-items-center"><samp th:text="${account.username}"></samp></td>
+                <td th:text="${account.firstName}"></td>
+                <td th:text="${account.lastName}"></td>
+                <td class="text-center col-auto">
+                    <a class="btn btn-secondary" th:href="@{/account/{id}(id=${account.id})}">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end mb-3">
+            <a th:href="@{/account/create}" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Créer un compte
+            </a>
+        </div>
+
+        <form th:action="@{/api/csv/upload}" method="post" enctype="multipart/form-data">
+            <h5><i class="bi bi-file-text-fill"></i> Import depuis une liste</h5>
+            <div class="input-group">
+                <input type="file" class="form-control" th:accept=".csv" id="file" name="file"
+                       aria-labelledby="fileInput" aria-label="Update"/>
+                <button class="btn btn-outline-secondary" type="submit" id="fileInput">Envoyer</button>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+<script type="text/javascript"
+        src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.5/af-2.3.7/b-2.2.2/b-colvis-2.2.2/b-print-2.2.2/r-2.2.9/sb-1.3.2/sp-2.0.0/datatables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#studentList').DataTable();
+        $('#teacherList').DataTable();
+    });
+</script>
+</body>
+</html>

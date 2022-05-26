@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title th:text="${account}"></title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/account/list}">Gestion des comptes</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${account}"></li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-person-fill"></i>
+        <th:block th:text="${account}"/>
+    </h2>
+    <hr>
+    <div class="alert alert-info alert-dismissible" role="alert" th:if="${param.updated}">
+        Le compte a été mis à jour avec succès.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <form th:action="@{#}" th:object="${updateAccountDto}" method="post">
+        <div class="container">
+            <h4>Informations de connexion</h4>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="login" th:value="${account.username}" readonly/>
+                <label for="login">Identifiant</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="hidden" name="type" th:unless="${account.type.isAssignable()}"
+                       th:value="${account.type.name()}"/>
+                <select name="type" id="type" class="form-select"
+                        th:classappend="${#fields.hasErrors('type')? 'is-invalid' : ''}"
+                        th:disabled="${not account.type.isAssignable()}">
+                    <option th:unless="${account.type.isAssignable()}" th:text="${account.type}"></option>
+                    <th:block th:if="${account.type.isAssignable()}">
+                        <option th:each="type : ${T(com.l3info.prdv.account.AccountType).values()}"
+                                th:if="${type.isAssignable()}" th:value="${type.name()}" th:text="${type}"
+                                th:selected="${type.equals(account.type)}"></option>
+                    </th:block>
+                </select>
+                <label for="type">Niveau de privilèges</label>
+                <div class="invalid-feedback" th:errors="*{type}"></div>
+            </div>
+        </div>
+        <div class="container">
+            <h4>État civil</h4>
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" id="firstName" class="form-control"
+                               th:classappend="${#fields.hasErrors('firstName')? 'is-invalid' : ''}"
+                               name="firstName" th:value="${account.firstName}"/>
+                        <label for="firstName">Prénom</label>
+                        <div class="invalid-feedback" th:errors="*{firstName}"></div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" id="lastName" class="form-control"
+                               th:classappend="${#fields.hasErrors('lastName')? 'is-invalid' : ''}"
+                               name="lastName" th:value="${account.lastName}"/>
+                        <label for="firstName">Nom de famille</label>
+                        <div class="invalid-feedback" th:errors="*{lastName}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-floating mb-1">
+                <input type="email" id="email" class="form-control"
+                       th:classappend="${#fields.hasErrors('email')? 'is-invalid' : ''}"
+                       name="email" th:value="${account.email}"/>
+                <label for="email">Adresse électronique</label>
+                <div class="invalid-feedback" th:errors="*{email}"></div>
+            </div>
+            <div class="mb-3 d-flex justify-content-end">
+                <button type="button" class="btn btn-danger me-3" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal"
+                        th:if="${account.type.isAssignable()}">
+                    <i class="bi bi-trash-fill"></i> Supprimer
+                </button>
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi-pencil-square"></i> Mettre à jour
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+         th:if="${account.type.isAssignable()}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Suppression du compte</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr·e de vouloir supprimer le compte de <span class="fw-bold"
+                                                                            th:text="${account}"></span> ?<br>
+                    Cette action est <span class="fw-bold">IRRÉVERSIBLE</span>.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/account/{id}/delete(id=${account.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Confirmer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h4>Groupes</h4>
+        <ul class="list-group mb-3" th:unless="${account.groups.isEmpty()}">
+            <li class="list-group-item" th:each="group : ${#lists.sort(account.groups)}">
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/group/{id}(id=${group.id})}" class="link-dark" th:text="${group}"></a>
+                    <form th:action="@{/account/{accountId}/group/{groupId}/remove(accountId=${account.id},groupId=${group.id})}"
+                          method="post">
+                        <button type="submit" class="btn-close" th:aria-label="'Retirer de ' + ${group}"></button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+        <p class="text-muted mb-3" th:if="${account.groups.isEmpty()}">
+            Ce compte n'est membre d'aucun groupe.
+        </p>
+        <div class="d-flex justify-content-end" th:unless="${groups.isEmpty()}">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="addGroup" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="bi bi-plus-lg"></i> Ajouter un groupe
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="addGroup">
+                    <li th:each="group : ${#lists.sort(groups)}">
+                        <form th:action="@{/account/{accountId}/group/{groupId}/add(accountId=${account.id},groupId=${group.id})}"
+                              method="post">
+                            <button type="submit" class="dropdown-item" th:text="${group}"></button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

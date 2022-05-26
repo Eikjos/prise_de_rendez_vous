@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Connexion</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Formulaire de connexion -->
+<div class="mx-auto my-2 my-md-4" style="max-width: 500px">
+    <h2><i class="bi bi-door-open-fill"></i> Connexion</h2>
+    <hr>
+    <div class="alert alert-danger alert-dismissible show fade" role="alert" th:if="${param.error}">
+        Une erreur d'authentification est survenue.<br>
+        Vérifiez vos informations de connexion puis réessayez.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="alert alert-info alert-dismissible show fade" role="alert" th:if="${param.logout}">
+        Vous avez été déconnecté·e de l'application avec succès.<br>
+        Fermez votre navigateur pour terminer le processus.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <form th:action="@{/login}" method="post">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="username" name="username" autofocus required/>
+            <label for="username">Identifiant</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" name="password" required/>
+            <label for="password">Mot de passe</label>
+        </div>
+        <div class="d-flex justify-content-end">
+            <input type="submit" class="btn btn-primary" value="Connexion"/>
+        </div>
+    </form>
+</div>
+
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

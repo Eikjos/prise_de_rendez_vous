@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Gestion des groupes</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mes événements</li>
+        </ol>
+    </nav>
+</div>
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-calendar-week-fill"></i> Mes événements</h2>
+    <hr>
+    <div class="alert alert-info" role="alert" th:if="${param.deleted}">
+        L'événement a été supprimé avec succès.
+    </div>
+    <div class="row mb-3" th:unless="${#lists.isEmpty(events)}" th:each="event : ${events}">
+        <div class="col">
+            <div class="card">
+                <div class="card-header" th:text="${event}"></div>
+                <div class="card-body">
+                    <p th:text="${event.description}"></p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-end">
+                        <a th:href="@{/event/{id}(id=${event.id})}" class="btn btn-secondary">
+                            <i class="bi bi-box-arrow-up-right"></i> Gérer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p th:if="${#lists.isEmpty(events)}">Vous n'avez aucun événement à votre actif.</p>
+    <div class="d-flex justify-content-end">
+        <a th:href="@{/event/create}" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Créer un événement
+        </a>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

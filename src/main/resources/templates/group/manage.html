@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title><th:block th:text="${group}"/> | PRDV</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/group/list}">Gestion des groupes</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${group}"></li>
+        </ol>
+    </nav>
+</div>
+<div class="container my-2 my-md-4">
+    <h2><i class="bi bi-folder-fill"></i>
+        <th:block th:text="${group}"/>
+    </h2>
+    <hr>
+    <div class="alert alert-success" role="alert" th:if="${param.updated}">
+        Le groupe a bien été mis à jour.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    <div class="container">
+        <form th:action="@{#}" th:object="${updateGroupDto}" method="post">
+            <h4>Informations du groupe</h4>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" th:classappend="${#fields.hasErrors('name')? 'is-invalid' : ''}"
+                       id="name" th:field="*{name}"/>
+                <label for="name">Nom</label>
+                <div class="invalid-feedback" th:errors="*{name}"></div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        <h4>Membres</h4>
+        <ul class="list-group mb-3" th:unless="${group.accounts.isEmpty()}">
+            <li class="list-group-item" th:each="account : ${#lists.sort(group.accounts)}">
+                <a th:href="@{/account/{id}(id=${account.id})}" class="link-dark" th:text="${account}"></a>
+            </li>
+        </ul>
+        <p class="text-muted" th:if="${group.accounts.isEmpty()}">
+            Aucun compte n'est affecté à ce groupe.
+        </p>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-danger me-3" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash-fill"></i> Supprimer le groupe
+        </button>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Suppression du groupe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr·e de vouloir supprimer le groupe <span class="fw-bold" th:text="${group}"></span> ?
+                    <br>
+                    Tous les comptes actuellement affectés à ce groupe seront automatiquement désaffectés.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/group/{id}/delete(id=${group.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Confirmer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

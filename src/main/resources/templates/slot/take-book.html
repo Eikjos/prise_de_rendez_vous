@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <th:block th:include="/fragments/head :: head" />
+    <title>Réservation de créneau</title>
+</head>
+<body>
+    <th:block th:include="/fragments/header :: header" />
+    <div class="container">
+        <h2>Créneaux</h2>
+        <hr>
+        <div class="alert alert-info alert-dismissible fade show" role="alert" th:if="${param.cancelled}">
+            Votre réservation a bien été annulée.<br>
+            Vous pouvez réserver un nouveau créneau ci-dessous.
+            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+        <div class="alert alert-danger" role="alert" th:unless="${r==null}">
+            Vous avez une réservation en cours pour cet événement.<br>
+            Le <th:block th:text="${#temporals.format(r.start, 'EEEE dd MMM YYYY')}"></th:block> à <th:block th:text="${#temporals.format(r.start, 'HH:mm')}"></th:block><br>
+            Pour réserver un autre créneau, veuillez
+            <a class="link-dark" th:href="${'slot/' + r.id}">
+                annuler votre réservation actuelle</a>.
+        </div>
+        <div class = "row d-flex justify-content-evenly">
+            <div class="col-4 mb-3" th:each="day : ${#lists.sort(slots.keySet())}">
+                <div class="card h-100" th:with="hour=${slots.get(day)}">
+                    <div class="card-header text-center" th:text="${#temporals.format(day, 'EEEE dd MMM YYYY')}"></div>
+                    <div class="card-body">
+                        <div class="row mx-auto">
+                            <div class="col-3 mb-2" th:each="slot: ${hour}">
+                                <a class="btn btn-outline-secondary" th:unless="${slot.booker}" th:href="${'slot/' + slot.id + '/book'}" th:text="${#temporals.format(slot.start, 'HH:mm')}"></a>
+                                <button class="btn btn-outline-secondary bg-dark" th:if="${slot.booker}"th:text="${#temporals.format(slot.start, 'HH:mm')}" disabled></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="/fragments/footer :: footer" />
+</body>
+</html>

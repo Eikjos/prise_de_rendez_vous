@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Mes réservations</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}"></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Gestion des créneaux</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card-colums" th:each="slot : ${slots}">
+    <div class="card">
+        <div class="card-body">
+            <h5 th:text="${slot.event.name}" class="card-title"></h5>
+            <p th:text="${slot.event.description}" class="card-text"></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">date:
+                <th:block th:text="${#temporals.format(slot.start, 'dd/MM/yyyy HH:mm')}">
+                </th:block>
+            </li>
+            <li class="list-group-item">salle:
+                <th:block th:text="${slot.event.location}"
+            </li>
+        </ul>
+        <div class="card-footer">
+            <div class="btn-toolbar justify-content-end">
+                <div class="btn-group mr-2">
+                    <a class="btn btn-sm btn-outline-danger"
+                       th:href="${'/event/' + slot.event.id + '/slot/' + 'slot.id'}"><span data-feather="trash-2">Annuler</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.icon {
+    color: grey;
+}
+
+a.disable-underline, a.disable-underline:hover {
+    color: inherit;
+    text-decoration: none;
+}

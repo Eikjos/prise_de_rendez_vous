@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <th:block th:include="/fragments/head :: head"/>
+    <title>Réservation de créneau</title>
+</head>
+<body>
+<th:block th:include="/fragments/header :: header"/>
+
+<!-- Barre de navigation -->
+<div class="container mt-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="link-dark" th:href="@{/event/{id}(id=${slot.event.id})}"></a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Créneau du <th:block th:text="${#temporals.format(slot.start, 'EEEE dd MMMM YYYY à HH:mm')}"/>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container mt-3">
+    <div class="container">
+        <h1 th:text="${slot.event.name}"></h1>
+        <hr>
+        <ul>
+            <li>Date: <th:block th:text="${#temporals.format(slot.start, 'EEEE dd MMMM YYYY')}"/></li>
+            <li>Horaire: <th:block th:text="${#temporals.format(slot.start, 'HH:mm')}"/></li>
+            <li>Salle: <th:block th:text="${slot.event.location}"/></li>
+        </ul>
+    </div>
+    <form th:action="@{#}" th:object="${bookSlotDto}" method="post">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" th:field="*{comment}" id="comment"/>
+            <label for="comment">Ajouter un commentaire</label>
+            <button type="submit" class="btn btn-sm btn-success mt-2 m-auto">Réserver</button>
+        </div>
+    </form>
+</div>
+<th:block th:include="/fragments/footer :: footer"/>
+</body>
+</html>
