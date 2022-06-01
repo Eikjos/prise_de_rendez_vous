@@ -75,6 +75,15 @@ public class EventController {
 
     // ---
 
+    @GetMapping("/{id}/print")
+    public String print(@PathVariable Long id, Model model) {
+        Event event = eventService.find(id);
+        model.addAttribute("event", event);
+        model.addAttribute("groups", groupService.findAll(event.getGroups()));
+        model.addAttribute("days", slotService.findAllPartitionedByDay(event));
+        return "event/print";
+    }
+
     @GetMapping("/{id}")
     public String manage(@PathVariable Long id,
                          @ModelAttribute("updateEventDto") UpdateEventDto updateEventDto,
