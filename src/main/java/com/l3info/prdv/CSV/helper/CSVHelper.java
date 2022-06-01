@@ -36,24 +36,19 @@ public class CSVHelper {
     }
 
 
-    public List<Account> csvToAccount(InputStream is) {
+    public void csvToAccount(InputStream is) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader,
                      CSVFormat.DEFAULT.withTrim())) {
             List<Account> accounts = new ArrayList<>();
             List<CSVRecord> csvRecords = csvParser.getRecords();
-            System.out.println(csvRecords.size());
             String[] firstLine = csvRecords.get(0).get(0).split(";");
-            System.out.println(Arrays.toString(firstLine));
             Map<String, Integer> map = new HashMap<>();
             for (int i = 0; i < firstLine.length; i++) {
-                System.out.println(firstLine.length);
                 map.put(firstLine[i].toLowerCase(Locale.ROOT), i);
             }
-            System.out.println(csvRecords.size());
             for (int i = 1; i < csvRecords.size(); i++) {
                 String[] line = csvRecords.get(i).get(0).split(";");
-                System.out.println(Arrays.toString(line));
                 CreateAccountDto dto = new CreateAccountDto();
                 dto.setUsername(line[map.get("login")]);
                 dto.setPassword(line[map.get("password")]);
@@ -62,23 +57,24 @@ public class CSVHelper {
                 dto.setEmail(line[map.get("email")]);
                 dto.setType(AccountType.accountTypeFromString(line[map.get("role")]));
                 Account account = accountService.create(dto.toAccount());
-                System.out.println(account.getGroups());
                 String[] groupsName = line[map.get("group")].split(",");
-                System.out.println(Arrays.toString(groupsName));
-                System.out.println(account.getId());
                 List<Group> groups = new ArrayList<>();
                 for (String s: groupsName) {
                      groups.add(groupService.findGroupByName(s));
                 }
                 for (Group g : groups) {
-                    System.out.println(account.getGroups());
                     accountService.addToGroup(account.getId(), g.getId());
                 }
                 accounts.add(account);
             }
-            return accounts;
         } catch (IOException e) {
             throw new RuntimeException("fail to parse com.l3info.prdv.CSV file: " + e.getMessage());
         }
+    }
+
+    public void accountToCsv() {
+         List<Account> accounts = accountService.findAll();
+         String truc = accounts.toString();
+         System.out.println(truc);
     }
 }

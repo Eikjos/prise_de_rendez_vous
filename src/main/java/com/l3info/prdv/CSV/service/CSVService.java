@@ -21,9 +21,13 @@ public class CSVService {
 
     public void save(MultipartFile file) {
         try {
-            List<Account> accounts = csvHelper.csvToAccount(file.getInputStream());
+            csvHelper.csvToAccount(file.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException("Fail to save accounts" + e.getMessage());
         }
+    }
+
+    public void export() {
+        csvHelper.accountToCsv();
     }
 }

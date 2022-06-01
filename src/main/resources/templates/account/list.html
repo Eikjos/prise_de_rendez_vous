@@ -112,6 +112,10 @@
                 <button class="btn btn-outline-secondary" type="submit" id="fileInput">Envoyer</button>
             </div>
         </form>
+        <div>
+            <h5><i class="bi bi-file-text-fill"></i> Exporté en liste CSV</h5>
+            <button class="btn btn-outline-secondary" th:action="@{/api/csv/export}">Exporté</button>
+        </div>
     </div>
 </div>
 <th:block th:include="./fragments/footer :: footer"/>

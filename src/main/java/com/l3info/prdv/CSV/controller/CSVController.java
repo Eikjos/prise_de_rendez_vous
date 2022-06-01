@@ -32,4 +32,10 @@ public class CSVController {
         }
         return "redirect:/account/list?formaterror";
     }
+
+    @PostMapping("/export")
+    public String exportFile(@RequestParam("file")MultipartFile file) {
+        csvService.export();
+        return "redirect:/account/list";
+    }
 }
