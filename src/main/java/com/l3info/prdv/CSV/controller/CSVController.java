@@ -34,7 +34,7 @@ public class CSVController {
     }
 
     @PostMapping("/export")
-    public String exportFile(@RequestParam("file")MultipartFile file) {
+    public String exportFile() {
         csvService.export();
         return "redirect:/account/list";
     }
