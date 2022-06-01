@@ -79,4 +79,9 @@ public class Account implements Comparable<Account> {
     public String toString() {
         return firstName + " " + lastName;
     }
+
+    public String exportString() {
+        return username + ";" + password + ";" + firstName + ";" + lastName + ";" + email + ";" + type.toString() + ";"
+                + groups.toString();
+    }
 }

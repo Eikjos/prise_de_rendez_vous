@@ -32,4 +32,15 @@ public class CSVController {
         }
         return "redirect:/account/list?formaterror";
     }
+
+    @PostMapping("/export")
+    public String exportFile() {
+        try {
+            String path  = csvService.export();
+            return "redirect:/account/list/" + path;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/account/list?formaterror";
+        }
+    }
 }
