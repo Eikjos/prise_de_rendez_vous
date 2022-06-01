@@ -1,8 +1,10 @@
 package com.l3info.prdv.CSV.controller;
 
+import java.io.IOException;
 import com.l3info.prdv.CSV.helper.CSVHelper;
 import com.l3info.prdv.CSV.service.CSVService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,14 +35,9 @@ public class CSVController {
         return "redirect:/account/list?formaterror";
     }
 
-    @PostMapping("/export")
+    @PostMapping(value = "/export", produces = {"text/csv"})
+    @ResponseBody
     public String exportFile() {
-        try {
-            String path  = csvService.export();
-            return "redirect:/account/list/" + path;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/account/list?formaterror";
-        }
+        return csvService.export();
     }
 }

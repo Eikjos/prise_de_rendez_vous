@@ -69,20 +69,13 @@ public class CSVHelper {
         }
     }
 
-    public String accountToCsv() throws IOException {
+    public String accountToCsv() {
          List<Account> accounts = accountService.findAll();
-         int account_number = accounts.size();
-         String path = "account_list.csv";
-         File account_list = new File(path);
-         String title = "login;password;firstname;lastname;email;role;group\n";
-         BufferedWriter writer = new BufferedWriter(new FileWriter(account_list));
-         writer.append(title);
-         for (int i = 0; i < account_number; i++) {
-             Account account = accounts.get(account_number);
-             writer.append(account.exportString());
-             writer.append("\n");
+         StringBuilder contents = new StringBuilder("login;password;firstname;lastname;email;role;group\n");
+         for (Account account : accounts) {
+             contents.append(account.exportString());
+             contents.append("\n");
          }
-         writer.close();
-         return path;
+         return contents.toString();
     }
 }

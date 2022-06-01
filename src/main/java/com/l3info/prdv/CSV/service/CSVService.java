@@ -27,11 +27,7 @@ public class CSVService {
         }
     }
 
-    public String export() throws IOException {
-        try {
-            return csvHelper.accountToCsv();
-        } catch (IOException e) {
-            throw new RuntimeException("Fail to export accounts" + e.getMessage());
-        }
+    public String export() {
+        return csvHelper.accountToCsv();
     }
 }
