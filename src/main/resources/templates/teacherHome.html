@@ -2,11 +2,11 @@
 
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <th:block th:include="/fragments/head :: head"/>
+    <th:block th:include="./fragments/head :: head"/>
     <title>Accueil</title>
 </head>
 <body>
-<th:block th:include="/fragments/header :: header"/>
+<th:block th:include="./fragments/header :: header"/>
 <div class="container my-2 my-md-4">
     <h2><i class="bi bi-house-fill"></i> Accueil</h2>
     <hr>
@@ -43,6 +43,6 @@
         </a>
     </div>
 </div>
-<th:block th:include="/fragments/footer :: footer"/>
+<th:block th:include="./fragments/footer :: footer"/>
 </body>
 </html>

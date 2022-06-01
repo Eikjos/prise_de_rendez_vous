@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <th:block th:include="/fragments/head :: head"/>
+    <th:block th:include="./fragments/head :: head"/>
     <title>Gestion des groupes</title>
 </head>
 <body>
-<th:block th:include="/fragments/header :: header"/>
+<th:block th:include="./fragments/header :: header"/>
 
 <!-- Barre de navigation -->
 <div class="container mt-2">
@@ -46,6 +46,6 @@
         </a>
     </div>
 </div>
-<th:block th:include="/fragments/footer :: footer"/>
+<th:block th:include="./fragments/footer :: footer"/>
 </body>
 </html>

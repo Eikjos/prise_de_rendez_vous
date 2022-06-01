@@ -2,12 +2,12 @@
 
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <th:block th:include="/fragments/head :: head"/>
+    <th:block th:include="./fragments/head :: head"/>
     <link th:href="@{css/student.css}" rel="stylesheet" type="text/css" media="screen">
     <title>Dashboard</title>
 </head>
 <body>
-<th:block th:include="/fragments/header :: header"/>
+<th:block th:include="./fragments/header :: header"/>
 
 
 <div class="my-2 m-lg-5">
@@ -69,6 +69,6 @@
             </div>
         </div>
 </div>
-<th:block th:include="/fragments/footer :: footer"/>
+<th:block th:include="./fragments/footer :: footer"/>
 </body>
 </html>
