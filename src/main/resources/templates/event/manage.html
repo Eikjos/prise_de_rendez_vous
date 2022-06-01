@@ -176,6 +176,9 @@
         <a class="btn btn-secondary" th:href="@{/event/{id}/slot/create(id=${event.id})}">
             <i class="bi bi-plus-lg"></i> Ajouter des créneaux
         </a>
+        <a class="btn btn-primary mx-5" th:href="@{/event/{id}/print(id=${event.id})}">
+            <i class="bi bi-printer"></i> Imprimer
+        </a>
     </div>
 </div>
 <th:block th:include="./fragments/footer :: footer"/>
