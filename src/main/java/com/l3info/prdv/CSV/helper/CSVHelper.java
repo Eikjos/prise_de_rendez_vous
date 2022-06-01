@@ -1,8 +1,5 @@
 package com.l3info.prdv.CSV.helper;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import com.l3info.prdv.account.Account;
@@ -72,9 +69,20 @@ public class CSVHelper {
         }
     }
 
-    public void accountToCsv() {
+    public String accountToCsv() throws IOException {
          List<Account> accounts = accountService.findAll();
-         String truc = accounts.toString();
-         System.out.println(truc);
+         int account_number = accounts.size();
+         String path = "account_list.csv";
+         File account_list = new File(path);
+         String title = "login;password;firstname;lastname;email;role;group\n";
+         BufferedWriter writer = new BufferedWriter(new FileWriter(account_list));
+         writer.append(title);
+         for (int i = 0; i < account_number; i++) {
+             Account account = accounts.get(account_number);
+             writer.append(account.exportString());
+             writer.append("\n");
+         }
+         writer.close();
+         return path;
     }
 }
