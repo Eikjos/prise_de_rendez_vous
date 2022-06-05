@@ -58,6 +58,11 @@ public class CSVHelper {
                 String[] groupsName = line[map.get("group")].split(",");
                 List<Group> groups = new ArrayList<>();
                 for (String s: groupsName) {
+                    if ((groupService.findGroupByName(s)) == null) {
+                        Group g = new Group();
+                        g.setName(s);
+                        groupService.create(g);
+                    }
                     groups.add(groupService.findGroupByName(s));
                 }
                 for (Group g : groups) {
