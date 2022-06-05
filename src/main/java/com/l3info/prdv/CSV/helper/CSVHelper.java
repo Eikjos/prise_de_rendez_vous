@@ -43,7 +43,6 @@ public class CSVHelper {
             String[] firstLine = csvRecords.get(0).get(0).split(";");
             Map<String, Integer> map = new HashMap<>();
             for (int i = 0; i < firstLine.length; i++) {
-                System.out.println(firstLine.length);
                 map.put(firstLine[i].toLowerCase(Locale.ROOT), i);
             }
             for (int i = 1; i < csvRecords.size(); i++) {
