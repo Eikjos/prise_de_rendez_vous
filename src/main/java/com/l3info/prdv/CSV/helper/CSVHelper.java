@@ -6,6 +6,7 @@ import com.l3info.prdv.account.Account;
 import com.l3info.prdv.account.AccountService;
 import com.l3info.prdv.account.AccountType;
 import com.l3info.prdv.account.dto.CreateAccountDto;
+import com.l3info.prdv.account.exception.AccountNotFoundException;
 import com.l3info.prdv.group.Group;
 import com.l3info.prdv.group.GroupService;
 import org.apache.commons.csv.CSVFormat;
@@ -54,6 +55,11 @@ public class CSVHelper {
                 dto.setEmail(line[map.get("email")]);
                 dto.setType(AccountType.accountTypeFromString(line[map.get("role")]));
                 Account account = accountService.create(dto.toAccount());
+                try {
+                    accountService.find(account.getUsername());
+                } catch(AccountNotFoundException e) {
+                    break;
+                }
                 String[] groupsName = line[map.get("group")].split(",");
                 List<Group> groups = new ArrayList<>();
                 for (String s: groupsName) {
