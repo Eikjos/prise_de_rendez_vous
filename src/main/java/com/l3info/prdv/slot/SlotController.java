@@ -116,7 +116,7 @@ public class SlotController {
         Account account = (Account) authentication.getDetails();
         if (!account.equals(slot.getBooker()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        slotService.edit(slot, account, null);
+        slotService.edit(slot, null, null);
         return "redirect:/event/{eventId}/slots?cancelled";
     }
 
