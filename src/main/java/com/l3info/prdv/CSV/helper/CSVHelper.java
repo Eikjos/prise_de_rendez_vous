@@ -54,21 +54,20 @@ public class CSVHelper {
                 dto.setLastName(line[map.get("lastname")].toUpperCase(Locale.ROOT));
                 dto.setEmail(line[map.get("email")]);
                 dto.setType(AccountType.accountTypeFromString(line[map.get("role")]));
-                Account account = accountService.create(dto.toAccount());
                 try {
-                    accountService.find(account.getUsername());
+                    Account account = accountService.create(dto.toAccount());
+                    String[] groupsName = line[map.get("group")].split(",");
+                    List<Group> groups = new ArrayList<>();
+                    for (String s: groupsName) {
+                        groups.add(groupService.findGroupByName(s));
+                    }
+                    for (Group g : groups) {
+                        accountService.addToGroup(account.getId(), g.getId());
+                    }
+                    accounts.add(account);
                 } catch(AccountNotFoundException e) {
-                    break;
+                    continue;
                 }
-                String[] groupsName = line[map.get("group")].split(",");
-                List<Group> groups = new ArrayList<>();
-                for (String s: groupsName) {
-                     groups.add(groupService.findGroupByName(s));
-                }
-                for (Group g : groups) {
-                    accountService.addToGroup(account.getId(), g.getId());
-                }
-                accounts.add(account);
             }
         } catch (IOException e) {
             throw new RuntimeException("fail to parse com.l3info.prdv.CSV file: " + e.getMessage());
